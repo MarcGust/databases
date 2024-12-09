@@ -14,3 +14,5 @@ CREATE TABLE Note (
 );
 
 ALTER TABLE Beer ADD COLUMN favorite INTEGER DEFAULT 0;
+
+SELECT COUNT(DISTINCT beerOriginCountry) AS uniqueCountryCount FROM Beer
