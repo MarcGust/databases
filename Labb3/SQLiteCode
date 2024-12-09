@@ -1,0 +1,14 @@
+CREATE TABLE Beer (
+    beerId INTEGER PRIMARY KEY AUTOINCREMENT,
+    beerName TEXT NOT NULL,
+    beerType TEXT NOT NULL,
+    beerOriginCountry TEXT NOT NULL,
+    alcoholContent REAL NOT NULL
+);
+
+CREATE TABLE Note (
+    noteId INTEGER PRIMARY KEY AUTOINCREMENT,
+    beerNoteId INTEGER,
+    note TEXT,
+    FOREIGN KEY (beerNoteId) REFERENCES Beer(beerId) ON DELETE CASCADE
+);
