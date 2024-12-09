@@ -15,4 +15,19 @@ CREATE TABLE Note (
 
 ALTER TABLE Beer ADD COLUMN favorite INTEGER DEFAULT 0;
 
-SELECT COUNT(DISTINCT beerOriginCountry) AS uniqueCountryCount FROM Beer
+SELECT COUNT(DISTINCT beerOriginCountry) AS uniqueCountryCount FROM Beer;
+
+--CRUD för att verifiera funktionerna av databasen
+INSERT INTO Beer (beerName, beerType, beerOriginCountry, alcoholContent)
+VALUES ('Falcon', 'Lager', 'Sverige', 5.2);
+
+INSERT INTO Note (beerNoteId, note)
+VALUES (1, 'Maltig smak med inslag av knäckebröd, aprikos och citrusskal.');
+
+SELECT * FROM Beer;
+
+UPDATE Beer
+SET beerName = 'Falcon Export', alcoholContent = 5.2
+WHERE beerId = 1;
+
+DELETE FROM Beer WHERE beerId = 1;
