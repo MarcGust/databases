@@ -29,6 +29,8 @@ public class LabbMain {
                 4. Lägg till öl
                 5. Uppdatera öl
                 6. Ta bort öl
+                7. Lägg till öl i favoriter
+                8. Visa favoriter
                 e. Avsluta
                 """;
             System.out.println(meny);
@@ -51,6 +53,12 @@ public class LabbMain {
                     break;
                 case "6":
                     deleteBeer(scanner);
+                    break;
+                case "7":
+                    updateBeerToFavorite(scanner);
+                    break;
+                case "8":
+                    showFavoriteBeers();
                     break;
                 case "e":
                     System.out.println("Program avslutat.");
@@ -360,6 +368,47 @@ public class LabbMain {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setDouble(1, alcoholContent);
             ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("ID\tNamn\t\tSort\t\tLand\t\tAlkoholhalt (promille)");
+            while (rs.next()) {
+                System.out.println(rs.getInt("beerId") + "\t" +
+                        rs.getString("beerName") + "\t" +
+                        rs.getString("beerType") + "\t" +
+                        rs.getString("beerOriginCountry") + "\t" +
+                        rs.getDouble("alcoholContent") + "‰");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void updateBeerToFavorite(Scanner scanner) {
+        System.out.println("Ange ID för ölen du vill göra till favorit: ");
+        int beerId = Integer.parseInt(scanner.nextLine());
+
+        if (!beerExists(beerId)) {
+            System.out.println("Ingen öl hittades med detta ID.");
+            return;
+        }
+
+        String sql = "UPDATE Beer SET favorite = 1 WHERE beerId = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, beerId);
+            pstmt.executeUpdate();
+            System.out.println("Ölen är nu en favorit.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void showFavoriteBeers() {
+        String sql = "SELECT * FROM Beer WHERE favorite = 1";
+
+        try (Connection conn = connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             System.out.println("ID\tNamn\t\tSort\t\tLand\t\tAlkoholhalt (promille)");
             while (rs.next()) {
