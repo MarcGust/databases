@@ -251,15 +251,17 @@ public class LabbMain {
             String choice = scanner.nextLine();
             switch (choice) {
                 case "1":
+                    searchBeerByName(scanner);
+                case "2":
                     searchBeerByCountry(scanner);
                     break;
-                case "2":
+                case "3":
                     searchBeerByType(scanner);
                     break;
-                case "3":
+                case "4":
                     searchBeerByAlcoholContent(scanner);
                     break;
-                case "4":
+                case "5":
                     return;
                 default:
                     System.out.println("Felaktigt val. Välj igen.");
@@ -268,8 +270,38 @@ public class LabbMain {
         }
     }
 
+    public static void searchBeerByName(Scanner scanner) {
+        System.out.println("Ange ölens namn att söka efter: ");
+        String beerName = scanner.nextLine();
+
+        String sql = "SELECT * FROM Beer WHERE beerName LIKE ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + beerName + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("ID\tNamn\t\tSort\t\tLand\t\tAlkoholhalt (promille)");
+            boolean found = false;
+            while (rs.next()) {
+                System.out.println(rs.getInt("beerId") + "\t" +
+                        rs.getString("beerName") + "\t" +
+                        rs.getString("beerType") + "\t" +
+                        rs.getString("beerOriginCountry") + "\t" +
+                        rs.getDouble("alcoholContent") + "‰");
+                found = true;
+            }
+
+            if (!found) {
+                System.out.println("Ingen öl hittades med det namnet.");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public static void searchBeerByCountry(Scanner scanner) {
-        System.out.println("Ange ursprungsland att söka efter: ");
+        System.out.println("Ange ursprungsland: ");
         String country = scanner.nextLine();
 
         String sql = "SELECT * FROM Beer WHERE beerOriginCountry = ?";
@@ -293,7 +325,7 @@ public class LabbMain {
     }
 
     public static void searchBeerByType(Scanner scanner) {
-        System.out.println("Ange ölsort att söka efter (t.ex. Lager, IPA, Stout): ");
+        System.out.println("Ange ölsort att söka efter: ");
         String type = scanner.nextLine();
 
         String sql = "SELECT * FROM Beer WHERE beerType = ?";
