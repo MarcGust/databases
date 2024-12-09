@@ -31,3 +31,16 @@ SET beerName = 'Falcon Export', alcoholContent = 5.2
 WHERE beerId = 1;
 
 DELETE FROM Beer WHERE beerId = 1;
+
+--Lägger testdata i databasen för att bättre kunna visa funktionerna i Java-applikationen
+INSERT INTO Beer (beerName, beerType, beerOriginCountry, alcoholContent) VALUES
+    ('Pripps Blå', 'Lager', 'Sverige', 5.0),
+    ('Eriksberg Pale Ale', 'Ale', 'Sverige', 5.6),
+    ('Bitburger', 'Lager', 'Tyskland', 4.8),
+    ('Newcastle Brown Ale', 'Ale', 'Storbrittanien', 4.7),
+    ('St Peters Cream Stout', 'Stout', 'Storbrittanien', 6.5);
+
+INSERT INTO Note (beerNoteId, note) VALUES
+    (1, 'Maltig smak med inslag av ljust bröd, honung, örter och citrus.'),
+    (2, 'Humlearomatisk smak med tydlig beska, inslag av apelsinskal, sockerkaka, aprikosmarmelad, honung och färska örter.'),
+    (3, 'Brödig smak med inslag av honung, citrusskal och ljust knäckebröd.')
