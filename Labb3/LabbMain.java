@@ -241,10 +241,11 @@ public class LabbMain {
         while (true) {
             String searchMenu = """
             Sök efter öl baserat på:
-            1. Land
-            2. Ölsort
-            3. Alkoholhalt (promille)
-            4. Gå tillbaka till huvudmenyn
+            1. Namn
+            2. Land
+            3. Ölsort
+            4. Alkoholhalt (promille)
+            5. Gå tillbaka till huvudmenyn
             """;
             System.out.println(searchMenu);
 
@@ -271,7 +272,7 @@ public class LabbMain {
     }
 
     public static void searchBeerByName(Scanner scanner) {
-        System.out.println("Ange ölens namn att söka efter: ");
+        System.out.println("Ange ölens namn: ");
         String beerName = scanner.nextLine();
 
         String sql = "SELECT * FROM Beer WHERE beerName LIKE ?";
@@ -325,7 +326,7 @@ public class LabbMain {
     }
 
     public static void searchBeerByType(Scanner scanner) {
-        System.out.println("Ange ölsort att söka efter: ");
+        System.out.println("Ange ölsort: ");
         String type = scanner.nextLine();
 
         String sql = "SELECT * FROM Beer WHERE beerType = ?";
@@ -349,7 +350,7 @@ public class LabbMain {
     }
 
     public static void searchBeerByAlcoholContent(Scanner scanner) {
-        System.out.println("Ange alkoholhalt (promille) att söka efter: ");
+        System.out.println("Ange alkoholhalt (promille): ");
         double alcoholContent = scanner.nextDouble();
         scanner.nextLine();
 
