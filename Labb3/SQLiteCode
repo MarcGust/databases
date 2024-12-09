@@ -26,11 +26,19 @@ VALUES (1, 'Maltig smak med inslag av knäckebröd, aprikos och citrusskal.');
 
 SELECT * FROM Beer;
 
+SELECT Beer.beerName, Note.note
+FROM Beer
+    JOIN Note ON Beer.beerId = Note.beerNoteId;
+
 UPDATE Beer
 SET beerName = 'Falcon Export', alcoholContent = 5.2
 WHERE beerId = 1;
 
 DELETE FROM Beer WHERE beerId = 1;
+DELETE FROM Note WHERE noteId = 1;
+
+DROP TABLE IF EXISTS Beer;
+DROP TABLE IF EXISTS Note;
 
 --Lägger testdata i databasen för att bättre kunna visa funktionerna i Java-applikationen
 INSERT INTO Beer (beerName, beerType, beerOriginCountry, alcoholContent) VALUES
