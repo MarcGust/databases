@@ -22,6 +22,7 @@ public class LabbMain {
 
         while (running) {
             String meny = """
+                
                 Startmeny:
                 1. Visa all öl
                 2. Visa öl med anteckningar
