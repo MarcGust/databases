@@ -31,6 +31,7 @@ public class LabbMain {
                 6. Ta bort öl
                 7. Lägg till öl i favoriter
                 8. Visa favoriter
+                9. Visa statistik
                 e. Avsluta
                 """;
             System.out.println(meny);
@@ -59,6 +60,9 @@ public class LabbMain {
                     break;
                 case "8":
                     showFavoriteBeers();
+                    break;
+                case "9":
+                    showStatistics();
                     break;
                 case "e":
                     System.out.println("Program avslutat.");
@@ -418,6 +422,26 @@ public class LabbMain {
                         rs.getString("beerOriginCountry") + "\t" +
                         rs.getDouble("alcoholContent") + "‰");
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void showStatistics() {
+        String beerCountSQL = "SELECT COUNT(*) AS beerCount FROM Beer";
+        String noteCountSQL = "SELECT COUNT(*) AS noteCount FROM Note";
+
+        try (Connection conn = connect();
+             Statement stmt = conn.createStatement()) {
+
+            ResultSet rsBeer = stmt.executeQuery(beerCountSQL);
+            int beerCount = rsBeer.getInt("beerCount");
+
+            ResultSet rsNote = stmt.executeQuery(noteCountSQL);
+            int noteCount = rsNote.getInt("noteCount");
+
+            System.out.println("Antal öl: " + beerCount);
+            System.out.println("Antal anteckningar: " + noteCount);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
