@@ -222,27 +222,6 @@ public class LabbMain {
         }
     }
 
-    public static void addNoteToBeer(Scanner scanner) {
-        System.out.println("Ange ID för ölen du vill lägga till en anteckning till: ");
-        int beerId = scanner.nextInt();
-        scanner.nextLine();
-
-        System.out.println("Ange anteckning: ");
-        String note = scanner.nextLine();
-
-        String sql = "INSERT INTO Note (beerNoteId, note) VALUES(?, ?)";
-
-        try (Connection conn = SQLiteJDBC.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, beerId);
-            pstmt.setString(2, note);
-            pstmt.executeUpdate();
-            System.out.println("Anteckning tillagd.");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public static void showBeerWithNotes() {
         String sql = "SELECT Beer.beerName, Note.note FROM Beer JOIN Note ON Beer.beerId = Note.beerNoteId";
 
