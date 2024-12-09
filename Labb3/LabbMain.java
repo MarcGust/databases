@@ -430,6 +430,7 @@ public class LabbMain {
     public static void showStatistics() {
         String beerCountSQL = "SELECT COUNT(*) AS beerCount FROM Beer";
         String noteCountSQL = "SELECT COUNT(*) AS noteCount FROM Note";
+        String uniqueCountryCountSQL = "SELECT COUNT(DISTINCT beerOriginCountry) AS uniqueCountryCount FROM Beer";
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement()) {
@@ -440,8 +441,12 @@ public class LabbMain {
             ResultSet rsNote = stmt.executeQuery(noteCountSQL);
             int noteCount = rsNote.getInt("noteCount");
 
+            ResultSet rsCountry = stmt.executeQuery(uniqueCountryCountSQL);
+            int uniqueCountryCount = rsCountry.getInt("uniqueCountryCount");
+
             System.out.println("Antal öl: " + beerCount);
             System.out.println("Antal anteckningar: " + noteCount);
+            System.out.println("Antal olika ursprungsländer: " + uniqueCountryCount);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
