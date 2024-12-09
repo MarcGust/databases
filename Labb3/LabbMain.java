@@ -23,34 +23,34 @@ public class LabbMain {
         while (running) {
             String meny = """
                 Startmeny:
-                1. Lägg till en ny öl
-                2. Visa all öl
-                3. Uppdatera en öl
-                4. Ta bort en öl
-                5. Visa en öl med anteckningar
-                6. Sök efter öl
+                1. Visa all öl
+                2. Visa öl med anteckningar
+                3. Sök efter öl
+                4. Lägg till öl
+                5. Uppdatera öl
+                6. Ta bort öl
                 e. Avsluta
                 """;
             System.out.println(meny);
 
             switch (scanner.nextLine().toLowerCase()) {
                 case "1":
-                    addBeer(scanner);
-                    break;
-                case "2":
                     showBeers();
                     break;
-                case "3":
-                    updateBeer(scanner);
-                    break;
-                case "4":
-                    deleteBeer(scanner);
-                    break;
-                case "5":
+                case "2":
                     showBeerWithNotes();
                     break;
-                case "6":
+                case "3":
                     searchBeer(scanner);
+                    break;
+                case "4":
+                    addBeer(scanner);
+                    break;
+                case "5":
+                    updateBeer(scanner);
+                    break;
+                case "6":
+                    deleteBeer(scanner);
                     break;
                 case "e":
                     System.out.println("Program avslutat.");
@@ -75,7 +75,7 @@ public class LabbMain {
 
         System.out.println("Ange alkoholhalt (promille): ");
         double alcoholContent = scanner.nextDouble();
-        scanner.nextLine();  // För att konsumera newline
+        scanner.nextLine();
 
         String sql = "INSERT INTO Beer(beerName, beerType, beerOriginCountry, alcoholContent) VALUES(?, ?, ?, ?)";
 
@@ -113,34 +113,93 @@ public class LabbMain {
     }
 
     public static void updateBeer(Scanner scanner) {
-        System.out.println("Ange ID för ölen du vill uppdatera: ");
-        int beerId = scanner.nextInt();
-        scanner.nextLine();  // Läs in newline
+        System.out.println("Ange ID för den öl du vill uppdatera: ");
+        int beerId = Integer.parseInt(scanner.nextLine());
 
-        System.out.println("Ange nytt ölnamn: ");
-        String beerName = scanner.nextLine();
+        if (!beerExists(beerId)) {
+            System.out.println("Ingen öl hittades med detta ID.");
+            return;
+        }
 
-        System.out.println("Ange ny ölsort: ");
-        String beerType = scanner.nextLine();
+        String updateMenu = """
+            Vad vill du uppdatera?
+            1. Uppdatera ölinformation
+            2. Lägg till en anteckning
+            3. Gå tillbaka till huvudmenyn
+            """;
+        System.out.println(updateMenu);
+
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "1":
+                updateBeerInfo(scanner, beerId);
+                break;
+            case "2":
+                addNoteToBeer(scanner, beerId);
+                break;
+            case "3":
+                return;
+            default:
+                System.out.println("Felaktigt val. Välj igen.");
+                break;
+        }
+    }
+
+    private static boolean beerExists(int beerId) {
+        String sql = "SELECT beerId FROM Beer WHERE beerId = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, beerId);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private static void updateBeerInfo(Scanner scanner, int beerId) {
+        System.out.println("Ange nytt namn på ölen: ");
+        String newName = scanner.nextLine();
+
+        System.out.println("Ange ny typ av öl (t.ex. Lager, IPA, Stout): ");
+        String newType = scanner.nextLine();
 
         System.out.println("Ange nytt ursprungsland: ");
-        String beerOriginCountry = scanner.nextLine();
+        String newCountry = scanner.nextLine();
 
         System.out.println("Ange ny alkoholhalt (promille): ");
-        double alcoholContent = scanner.nextDouble();
-        scanner.nextLine();  // Läs in newline
+        double newAlcoholContent = Double.parseDouble(scanner.nextLine());
 
         String sql = "UPDATE Beer SET beerName = ?, beerType = ?, beerOriginCountry = ?, alcoholContent = ? WHERE beerId = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, beerName);
-            pstmt.setString(2, beerType);
-            pstmt.setString(3, beerOriginCountry);
-            pstmt.setDouble(4, alcoholContent);
+            pstmt.setString(1, newName);
+            pstmt.setString(2, newType);
+            pstmt.setString(3, newCountry);
+            pstmt.setDouble(4, newAlcoholContent);
             pstmt.setInt(5, beerId);
             pstmt.executeUpdate();
-            System.out.println("Öl uppdaterad.");
+            System.out.println("Ölinformationen har uppdaterats.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void addNoteToBeer(Scanner scanner, int beerId) {
+        System.out.println("Ange din anteckning för ölen: ");
+        String noteText = scanner.nextLine();
+
+        String sql = "INSERT INTO Note (beerNoteId, note) VALUES (?, ?)";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, beerId);
+            pstmt.setString(2, noteText);
+            pstmt.executeUpdate();
+            System.out.println("Anteckningen har lagts till.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -149,7 +208,7 @@ public class LabbMain {
     public static void deleteBeer(Scanner scanner) {
         System.out.println("Ange ID för ölen du vill radera: ");
         int beerId = scanner.nextInt();
-        scanner.nextLine();  // Konsumera newline
+        scanner.nextLine();
 
         String sql = "DELETE FROM Beer WHERE beerId = ?";
 
@@ -166,7 +225,7 @@ public class LabbMain {
     public static void addNoteToBeer(Scanner scanner) {
         System.out.println("Ange ID för ölen du vill lägga till en anteckning till: ");
         int beerId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        scanner.nextLine();
 
         System.out.println("Ange anteckning: ");
         String note = scanner.nextLine();
@@ -185,11 +244,7 @@ public class LabbMain {
     }
 
     public static void showBeerWithNotes() {
-        String sql = """
-                SELECT Beer.beerName, Note.note 
-                FROM Beer 
-                JOIN Note ON Beer.beerId = Note.beerNoteId
-                """;
+        String sql = "SELECT Beer.beerName, Note.note FROM Beer JOIN Note ON Beer.beerId = Note.beerNoteId";
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement();
@@ -285,7 +340,7 @@ public class LabbMain {
     public static void searchBeerByAlcoholContent(Scanner scanner) {
         System.out.println("Ange alkoholhalt (promille) att söka efter: ");
         double alcoholContent = scanner.nextDouble();
-        scanner.nextLine();  // Konsumera newline
+        scanner.nextLine();
 
         String sql = "SELECT * FROM Beer WHERE alcoholContent = ?";
 
